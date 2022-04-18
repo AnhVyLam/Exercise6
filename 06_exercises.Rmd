@@ -101,9 +101,27 @@ Groceries_dataset %>%
 
 3. Create a table using `gt` with data from your project or from the `garden_harvest` data if your project data aren't ready. Use at least 3 `gt()` functions.
 ```{r}
-gt(garden_harvest,
-   rowname_col = "vegetable",
-   groupname_col = "date")
+lettuce_mean <- garden_harvest %>%
+  group_by(variety) %>% 
+  filter(vegetable == "lettuce") %>% 
+  summarize("Average Weight" = mean(weight), 
+            "Total Weight" = sum(weight))
+
+lettuce_mean
+
+gH_table <- lettuce_mean %>% 
+  gt(rowname_col = "row" ,
+   groupname_col = "col",
+   row_group.sep = getOption("variety", "-"),
+   auto_align = TRUE)
+
+gH_table2 <- gH_table %>% 
+  tab_header(
+    title = md("**Garden Harvest Data**"),
+    subtitle = "Average Weight of Lettuce Variety") 
+
+gH_table2
+
 ```
 
 4. CHALLENGE (not graded): Write code to replicate the table shown below (open the .html file to see it) created from the `garden_harvest` data as best as you can. When you get to coloring the cells, I used the following line of code for the `colors` argument:
@@ -116,9 +134,113 @@ colors = scales::col_numeric(
 ```
 
 ![](garden_table.html){width=600, height=1000}
+```{r}
+gt(garden_harvest,
+   rowname_col = "variety",
+   groupname_col = dplyr::group_vars(garden_harvest),
+   auto_align = TRUE)
+```
+
+```{r}
+july_beans <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "beans", date >= "2020-07-01", date <= "2020-07-31") %>% 
+  mutate("weight" = cumsum(weight))
+  
+july_beans
+
+aug_beans <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "beans", date >= "2020-08-01", date <= "2020-08-31")
+aug_beans
+
+sept_beans <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "beans", date >= "2020-09-01", date <= "2020-09-30")
+sept_beans
+
+oct_beans <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "beans", date >= "2020-10-01", date <= "2020-10-31")
+oct_beans
+  
+```
+
+```{r}
+july_toma <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "tomatoes", date >= "2020-07-01", date <= "2020-07-31") %>% 
+  mutate("weight" = cumsum(weight))
+  
+july_toma
+
+aug_toma <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "tomatoes", date >= "2020-08-01", date <= "2020-08-31")
+aug_toma
+
+sept_toma <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "tomatoes", date >= "2020-09-01", date <= "2020-09-30")
+sept_toma
+
+oct_toma <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "beans", date >= "2020-10-01", date <= "2020-10-31")
+oct_toma
+```
+
+```{r}
+july_carrots <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "carrots", date >= "2020-07-01", date <= "2020-07-31") %>% 
+  mutate("weight" = cumsum(weight))
+  
+july_carrots
+
+aug_carrots <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "carrots", date >= "2020-08-01", date <= "2020-08-31")
+aug_carrots
+
+sept_carrots <- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "carrots", date >= "2020-09-01", date <= "2020-09-30")
+sept_carrots
+
+oct_carrots<- garden_harvest %>% 
+  group_by(variety, date) %>% 
+  filter(vegetable == "carrots", date >= "2020-10-01", date <= "2020-10-31")
+oct_carrots
+```
+
+
+```{r}
+tab_final <-
+  july_beans %>% 
+  gt(
+    rowname_col = "row",
+    groupname_col = "group"
+  ) %>% 
+  tab_footnote(
+    footnote = "Month is not complete yet",
+    locations = cells_column_labels(columns = vars(date))
+  ) %>% 
+  tab_header(
+    title = "Bean, Carrot, and Tomato Harvest (lb)",
+  ) %>% 
+  tab_options(footnotes.marks = letters) %>% 
+  tab_options(column_labels.background.color = "darkred")
+
+tab_final
+```
 
   
 5. Use `patchwork` operators and functions to combine at least two graphs using your project data or `garden_harvest` data if your project data aren't read.
+```{r}
+
+```
+
   
 ## Webscraping exercise (also from tutorial)
 
