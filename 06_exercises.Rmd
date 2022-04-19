@@ -12,7 +12,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
 ```
 
 ```{r libraries}
@@ -364,9 +364,9 @@ course_genRq
 ```
 ```{r}
 course_desc <- fall2017 %>% 
-  html_element(".collapsed p:nth-child(1)") %>% 
+  html_elements(".collapsed p:nth-child(1)") %>% 
   html_text2() %>% 
-  str_sub(start = 3, end = -14)
+  str_sub(start = 3, end = -10)
 
 course_desc
 ```
@@ -382,6 +382,19 @@ course_df
   
 
 7. Create a graph that shows the number of sections offered per department. Hint: The department is a substring of the course number - there are `str_XXX()` functions that can help. Yes, COMP and MATH are the same department, but for this exercise you can just show the results by four letter department code, e.g., with COMP and MATH separate.
+```{r}
+num_of_sect <- course_df %>% 
+  mutate(department = str_sub(Number, start = 1, end = 4)) %>% 
+  count(department)
+
+num_of_sect
+```
+```{r, fig.alt="The number of sections offered per department at Macalester in the fall semester of 2017."}
+num_of_sect %>% 
+  ggplot(aes(y=department, x = n)) +
+  geom_col()+
+  labs(x = "", y = "", title = "Number of Sections Offered Per Department")
+```
 
 
 8. Analyze the typical length of course names by department. To do so, create a new data table based on your courses data table, with the following changes:
@@ -389,8 +402,33 @@ course_df
   * New columns for the length of the title of a course and the length of the description of the course. Hint: `str_length`.  
   * Remove departments that have fewer than 10 sections of courses. To do so, group by department, then remove observations in groups with fewer than 10 sections (Hint: use filter with n()). Then `ungroup()` the data.  
   * Create a visualization of the differences across groups in lengths of course names or course descriptions. Think carefully about the visualization you should be using!
+```{r}
+course_title_len <- course_df %>% 
+  mutate("Length of Course Title" = str_length(Name), 
+         "Course Description Length"= str_length(Description),
+         department = str_sub(Number, start = 1, end = 4)) %>% 
+  group_by(department) %>% 
+  filter(n()>10) %>% 
+  ungroup()
 
+course_title_len
+```
 
+```{r, fig.alt="A jitter points to showcase the course description length by course title length, per department in fall 2017."}
+course_title_len %>% 
+  ggplot(aes(y=`Length of Course Title`, x = `Course Description Length`,color = department)) +
+  geom_jitter()+
+  labs(x = "", y = "", title = "Course Description Length by Length of Course Title,
+       per Department")
+```
+Comment: 
+It seems like the longer the course description is, the longer the course title is as well,
+by department. And it seems like the Environmental Studies department tend to
+have a longer description with longer course titles. However, this does not 
+tell whether or not a class is more likely to be chosen for a specific department or
+not.
   
+  
+Github Link:
 
 **DID YOU REMEMBER TO UNCOMMENT THE OPTIONS AT THE TOP?**
