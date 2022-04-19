@@ -429,6 +429,5 @@ tell whether or not a class is more likely to be chosen for a specific departmen
 not.
   
   
-Github Link:
+Github Link: https://github.com/vlam004/Exercise6.git
 
-**DID YOU REMEMBER TO UNCOMMENT THE OPTIONS AT THE TOP?**
